@@ -1,7 +1,3 @@
-export function getModels()
-{
-
-}
 
 export function handleUpload(event) {
     const fileInput = document.createElement('input');
