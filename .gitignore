@@ -1,0 +1,12 @@
+# golbal
+.vscode
+test
+
+# zero
+openorganelle
+deepcontact
+server/security/__pycache__
+server/security/sqls/temp.sql
+
+# boli
+server/index.html

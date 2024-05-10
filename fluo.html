@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    
+    <title>Fluorescent Interface</title>
+    
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">-->
+    <style>
+        /* Global Settings */
+        @font-face {
+            font-family: "custom fonts";
+            src: url("/resource/SmileySans-Oblique.otf.woff2");
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: "custom fonts";
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        html,body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background-image: url("/resource/bg.png");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        .zzz{
+            color:#a9a8a8;
+            font-size:25px;
+        }
+        img,
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        button:hover {
+            cursor: pointer;
+        }
+
+        .button, .upload-input {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .upload-input {
+            color: #007bff;
+            background-color: transparent;
+        }
+        .center-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .icon {
+            margin-right: 5px;
+        }
+
+        #uploadForm {
+            margin-bottom: 20px;
+        }
+
+        #reconstructionLink {
+            margin-top: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/head.css">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+    <!-- Page Head -->
+    <div class="center-screen">
+        <ul>
+            <li>
+                <p class="zzz">Welcome to use Fluorescent!</p>
+            </li>
+            <li>
+                <button align="right" name="user">
+                    <svg class="replace-svg" name="user"></svg>
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div id="head">
+        <!-- Left side box -->
+        
+        <!-- Right side box -->
+        <div id="logo">
+            <svg class="replace-svg" name="logo"></svg>
+        </div>
+    </div>
+    <div id="main">
+        
+        <div>
+            <p>Welcome to use Fluorescent!</p>
+            
+            <p>You can click the "Choose Folder" button to select a local Folder and click the "Upload Folder" button to upload it to the backend.</p>
+            <br><br>
+        </div>
+    </div>
+    <h2 style="text-align: center;">Fluorescent Interface</h2>
+
+    
+
+    <form id="uploadFolderForm" enctype="multipart/form-data" style="text-align: center;">
+        <input id="folderUpload" type="file" name="files" webkitdirectory directory multiple style="display: none;" onchange="updateFolderNameDisplay()">
+        <label for="folderUpload" class="button">
+            <i class="fas fa-folder-open icon"></i>Choose Folder
+        </label>
+        <span id="folderNameDisplay"></span>
+        <button type="button" class="button" onclick="submitform()">
+            <i class="fas fa-upload icon"></i>Upload Folder
+        </button>
+    </form>
+    
+    <script>
+        function updateFolderNameDisplay() {
+            const files = document.getElementById('folderUpload').files;
+            if (files.length > 0) {
+                const rootFolderName = files[0].webkitRelativePath.split('/')[0];
+                document.getElementById('folderNameDisplay').textContent = rootFolderName + ' (' + files.length + ' files)';
+            }
+        }
+        function submitform() {
+            const form = document.getElementById('uploadFolderForm');
+            const folderUpload = document.getElementById('folderUpload');
+            if (folderUpload.files.length === 0) {
+                alert('Please choose a folder first.');
+                return;
+            }
+            const formData = new FormData();
+            const rootFolderName = folderUpload.files[0].webkitRelativePath.split('/')[0]; // Extract the root folder name
+            formData.append('rootFolderName', rootFolderName);  // Append the root folder name to the formData
+            Array.from(folderUpload.files).forEach(file => {
+                formData.append('files', file, file.webkitRelativePath);
+            });
+        
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://10.112.127.227:8000/dataset', true);
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    alert('Upload successful!');
+                    document.getElementById('folderNameDisplay').textContent = '';
+                } else {
+                    alert('Upload failed. Please try again.');
+                    document.getElementById('folderNameDisplay').textContent = '';
+                }
+            };
+            xhr.onerror = function() {
+                alert('Upload failed. Please check your connection and try again.');
+                document.getElementById('folderNameDisplay').textContent = '';
+            };
+            xhr.send(formData);
+        }
+        
+        function submitForm() {
+            var form = document.getElementById('uploadForm');
+            var fileInput = document.getElementById('fileUpload');
+            if(fileInput.files.length == 0) {
+                alert('Please choose a file first.');
+            } else {
+                var formData = new FormData(form);
+        
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', form.action, true);
+    
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        alert('Upload successful!');
+                        document.getElementById('fileNameDisplay').textContent = '';
+                    } else {
+                        alert('Upload failed. Please try again.');
+                        document.getElementById('fileNameDisplay').textContent = '';
+                    }
+                };
+        
+                xhr.onerror = function() {
+                    alert('Upload failed. Please check your connection and try again.');
+                    document.getElementById('fileNameDisplay').textContent = '';
+                };
+        
+                xhr.send(formData);
+            }
+        }
+    </script>
+
+    <div style="display: flex; justify-content: center;">
+        <button id="runFluorescent" class="button" onclick="run()">
+            <i class="fas fa-cogs icon"></i>Run Fluorescent
+        </button>
+        
+    </div>
+
+    <div style="display: flex; justify-content: center;">
+        <button id="showResult" class="button" style="display:none" >
+            <i class="fas fa-eye icon"></i>Show Fluorescent Result
+        </button>
+        
+    </div>
+    <div style="display: flex; justify-content: center;">
+        <div id="result">
+                <!-- The link will be displayed here after fetching the result -->
+        </div>    
+    </div>
+
+    
+    
+
+    <div id="foot"></div>
+    <script type="module" src="/js/index.js"></script>
+</body>
+
+</html>

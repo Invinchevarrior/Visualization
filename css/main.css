@@ -1,0 +1,53 @@
+/* Main Block Settings */
+#main {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-evenly;
+    padding-top: 2rem;
+}
+
+#upload,
+#result,
+#intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30vw;
+    height: 30vw;
+}
+
+#upload-box,
+#result-box {
+    /* background-color: #f2f2f2; */
+    border: 0.1rem dashed black;
+    height: 20rem;
+}
+
+#intro {
+    display: block;
+    width: 15vw;
+}
+
+#upload-box:hover,
+#result-box:hover {
+    cursor: pointer;
+}
+
+.toolbar {
+    width: 100%;
+    padding: 3% 10% 0 10%;
+    display: flex;
+    justify-content: space-around;
+}
+
+#result-tools>* {
+    width: 30%;
+}
+
+button[name="submit"] {
+    font-size: 3rem;
+}
+#result-tools button{
+    background-color: transparent;
+    border: 0;
+}

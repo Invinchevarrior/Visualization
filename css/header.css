@@ -1,0 +1,42 @@
+ul {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #e7e7e7;
+    background-color: #f3f3f3;
+    height: 10%;
+    justify-content: space-between;
+}
+
+li {
+    display: flex;
+    height: 100%;
+}
+
+li a {
+    display: block;
+    color: #666;
+    text-align: center;
+    padding: 25px 25px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #ddd;
+}
+
+li a.active {
+    color: white;
+    background-color: #e1dddd;
+}
+
+li button {
+    height: 100%;
+}
+
+.zzz {
+    font-size: 2rem;
+    padding-top: 3%;
+}

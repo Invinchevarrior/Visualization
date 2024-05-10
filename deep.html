@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    
+    <title>DeepContact Interface</title>
+    
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">-->
+    <style>
+        /* Global Settings */
+        @font-face {
+            font-family: "custom fonts";
+            src: url("/resource/SmileySans-Oblique.otf.woff2");
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: "custom fonts";
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        html,body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background-image: url("/resource/bg.png");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        .zzz{
+            color:#a9a8a8;
+            font-size:25px;
+        }
+        img,
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        button:hover {
+            cursor: pointer;
+        }
+
+        .button, .upload-input {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .upload-input {
+            color: #007bff;
+            background-color: transparent;
+        }
+
+        .icon {
+            margin-right: 5px;
+        }
+
+        #uploadForm {
+            margin-bottom: 20px;
+        }
+
+        #reconstructionLink {
+            margin-top: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/head.css">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<script>
+    window.onload = function() {
+        var select = document.getElementById('select');
+        select.addEventListener('change', function() {
+            var value = this.value;
+            var links = document.getElementsByTagName('a');
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i];
+                if (link.getAttribute('href').split('.')[0].toLowerCase() === value) {
+                    window.location.href = value + '.html';
+                } else {
+                    link.className = '';
+                }
+            }
+        });
+    };
+</script>
+<body>
+    <!-- Page Head -->
+    <ul>
+        <li>
+            <a href="data.html">Data Collection</a>    
+            <a class="active" href="deep.html">DeepContact</a>
+            <a href="neur.html">Neuroglancer</a>
+            <a href="open.html">Openorganelle</a>
+        </li>
+        <li>
+            <p class="zzz">Welcome to use DeepContact!</p>
+        </li>
+        <li >
+            <button align="right" name="user">
+                <svg class="replace-svg" name="user"></svg>
+                
+            </button>
+        </li>
+
+    </ul>
+    <div id="head">
+        <!-- Left side box -->
+        <div id="model-select">
+            <svg class="replace-svg" name="open-file"></svg>
+            <select id="select" name="model-select">
+                <option value="">Please select a model</option>
+                <option value="data">Data Collection</option>
+                <option value="deep">DeepContact</option>
+                <option value="neur">Neuroglancer</option>
+                <option value="open">Openorganelle</option>
+            </select>
+        </div>
+        <!-- Right side box -->
+        <div id="logo">
+            <svg class="replace-svg" name="logo"></svg>
+        </div>
+    </div>
+    <div id="main">
+        
+        <div>
+            <p>Welcome to use DeepContact!</p>
+            <p>You can click the "Run DeepContact" button to call DeepContact to run and wait for the result.</p>
+            <p>When the results are available, you can click the "Show Quantization Result" button to display and open it.</p>
+            <br><br>
+        </div>
+    </div>
+    <h2 style="text-align: center;">DeepContact 2D Quantization Interface</h2>
+
+    <form id="uploadForm" action="http://10.112.127.227:8000/home/lab212/upload" method="post" enctype="multipart/form-data" style="text-align: center;">
+        <input id="fileUpload" type="file" name="file" style="display: none;" onchange="document.getElementById('fileNameDisplay').textContent = this.files[0].name">
+        <label for="fileUpload" class="button">
+            <i class="fas fa-file-upload icon"></i>Choose File
+        </label>
+        <span id="fileNameDisplay"></span>
+        <button type="button" class="button" onclick="submitForm()">
+            <i class="fas fa-upload icon"></i>Upload File
+        </button>
+
+    </form>
+
+    <form id="uploadFolderForm" enctype="multipart/form-data" style="text-align: center;">
+        <input id="folderUpload" type="file" name="files" webkitdirectory directory multiple style="display: none;" onchange="updateFolderNameDisplay()">
+        <label for="folderUpload" class="button">
+            <i class="fas fa-folder-open icon"></i>Choose Folder
+        </label>
+        <span id="folderNameDisplay"></span>
+        <button type="button" class="button" onclick="submitform()">
+            <i class="fas fa-upload icon"></i>Upload Folder
+        </button>
+    </form>
+    
+    <script>
+        function updateFolderNameDisplay() {
+            const files = document.getElementById('folderUpload').files;
+            if (files.length > 0) {
+                const rootFolderName = files[0].webkitRelativePath.split('/')[0];
+                document.getElementById('folderNameDisplay').textContent = rootFolderName + ' (' + files.length + ' files)';
+            }
+        }
+        function submitform() {
+            const form = document.getElementById('uploadFolderForm');
+            const folderUpload = document.getElementById('folderUpload');
+            if (folderUpload.files.length === 0) {
+                alert('Please choose a folder first.');
+                return;
+            }
+            const formData = new FormData();
+            const rootFolderName = folderUpload.files[0].webkitRelativePath.split('/')[0]; // Extract the root folder name
+            formData.append('rootFolderName', rootFolderName);  // Append the root folder name to the formData
+            Array.from(folderUpload.files).forEach(file => {
+                formData.append('files', file, file.webkitRelativePath);
+            });
+        
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://10.112.127.227:8000/upload', true);
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    alert('Upload successful!');
+                    document.getElementById('folderNameDisplay').textContent = '';
+                } else {
+                    alert('Upload failed. Please try again.');
+                    document.getElementById('folderNameDisplay').textContent = '';
+                }
+            };
+            xhr.onerror = function() {
+                alert('Upload failed. Please check your connection and try again.');
+                document.getElementById('folderNameDisplay').textContent = '';
+            };
+            xhr.send(formData);
+        }
+        
+        function submitForm() {
+            var form = document.getElementById('uploadForm');
+            var fileInput = document.getElementById('fileUpload');
+            if(fileInput.files.length == 0) {
+                alert('Please choose a file first.');
+            } else {
+                // Use FormData to encapsulate the file data
+                var formData = new FormData(form);
+        
+                // Create an XMLHttpRequest to submit form data
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', form.action, true);
+        
+                // Set up what happens on successful data submission
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        // Show a success message (or you can check the response for custom success criteria)
+                        alert('Upload successful!');
+                        document.getElementById('fileNameDisplay').textContent = '';
+                    } else {
+                        // Handle request failure
+                        alert('Upload failed. Please try again.');
+                        document.getElementById('fileNameDisplay').textContent = '';
+                    }
+                };
+        
+                // Handle request error
+                xhr.onerror = function() {
+                    alert('Upload failed. Please check your connection and try again.');
+                    document.getElementById('fileNameDisplay').textContent = '';
+                };
+        
+                // Send the form data
+                xhr.send(formData);
+            }
+        }
+    </script>
+
+    <div style="display: flex; justify-content: center;">
+        <button id="runQuantization" class="button" onclick="run()">
+            <i class="fas fa-cogs icon"></i>Run DeepContact
+        </button>
+        
+    </div>
+
+    <div style="display: flex; justify-content: center;">
+        <button id="showResult" class="button" style="display:none" >
+            <i class="fas fa-eye icon"></i>Show Quantization Result
+        </button>
+        
+    </div>
+    <div style="display: flex; justify-content: center;">
+        <div id="quantizationresult">
+                <!-- The link will be displayed here after fetching the result -->
+        </div>    
+    </div>
+
+    
+    <script>
+        document.getElementById('runQuantization').addEventListener('click', function() {
+            fetch('http://10.112.127.227:8000/run_deep', {
+                method: 'POST',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                document.getElementById('showResult').style.display = 'inline-block'; // Show the "Show Result" button
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById('quantizationresult').textContent = 'Failed to run the script. Make sure the server is reachable.';
+            });
+        });
+    
+        document.getElementById('showResult').addEventListener('click', function() {
+            fetch('http://10.112.127.227:8000/get_deep', { method: 'GET' })
+                .then(response => response.json())
+                .then(files => {
+                    const fileListElement = document.getElementById('quantizationresult');
+                    fileListElement.innerHTML = ''; // Clear current list
+                    files.forEach(file => {
+                        const fileElement = document.createElement('button');
+                        fileElement.style.backgroundColor = 'orange';
+                        fileElement.textContent = file;
+                        fileElement.onclick = () => openFile(file); // Add click handler to open file
+                        fileElement.className = 'button';
+                        fileListElement.appendChild(fileElement);
+                    });
+                })
+                .catch(error => console.error('Error fetching files:', error));
+        });
+        function openFile(fileName) {
+            // Define the URL for fetching the file
+            const fileUrl = `http://10.112.127.227:8000/get_deep/${encodeURIComponent(fileName)}#/`;
+        
+            // Open the file URL in a new browser window
+            window.open(fileUrl, '_blank');
+        }
+    </script>
+
+    <div id="foot"></div>
+    <script type="module" src="/js/index.js"></script>
+</body>
+
+</html>
